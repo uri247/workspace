@@ -20,5 +20,5 @@ def fib(n):
     return f
 
 if __name__ == '__main__':
-    for x in range(200):    
-        print x,fib(x)
+    for x in range(30):
+        print '{0:3d} {1:12d}'.format(x,fib(x))
