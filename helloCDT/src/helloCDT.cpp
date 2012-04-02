@@ -1,11 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <string>
-using namespace std;
+
 
 int main()
 {
-        vector<string> words;
+        std::vector<std::string> words;
         words.push_back( "Hello" );
         words.push_back( "world" );
         words.push_back( "!!" );
