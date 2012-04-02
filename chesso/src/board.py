@@ -4,34 +4,68 @@ Created on Apr 1, 2012
 @author: uri
 '''
 
-class Shape:
-    PION=1
-    ROCK=2
-    HORSE=3
-    BISOPH=4
-    QUINNE=5
-    KING=6
 
-def shapeName(shape):
-    names = { Shape.PION: 'pion', Shape.ROCK : 'rock', Shape.HORSE: 'horse',
-             Shape.BISOPH: 'bishop', Shape.QUINNE: 'queen', Shape.KING: 'king' }
-    return names[shape]
+class Shapes:
+    PAWN=0
+    KNIGHT=1
+    BISHOP=2
+    ROOK=3
+    QUEEN=4
+    KING=5
 
-class Color:
+class Colors:
     WHITE=1
     BLACK=2
 
+class ShapeTrait:
+    def __init__( self, shape, name, letter ):
+        self.shape = shape
+        self.name = name
+        self.letter = letter
+
+ShapeTraits = [
+    ShapeTrait( Shapes.PAWN, 'pawn', 'p' ),
+    ShapeTrait( Shapes.KNIGHT, 'knight', 'n' ),
+    ShapeTrait( Shapes.BISHOP, 'bishop', 'b' ),
+    ShapeTrait( Shapes.ROOK, 'rook', 'r' ),
+    ShapeTrait( Shapes.QUEEN, 'queen', 'q' ),
+    ShapeTrait( Shapes.KING, 'king', 'k' ),               
+    ]
+
+def shapeName(shape):
+    return ShapeTraits[shape].name
+
+def shapeLetter(shape):
+    return ShapeTraits[shape].letter
+
+def shapeByLetter(ch):
+    ch = ch.lower()
+    li = [tr for tr in ShapeTraits if tr.letter == ch]
+    assert len(li) <= 1
+    if len(li):
+        return li[0]
+    else:
+        raise KeyError
+
 def colorName(color):
-    return color==Color.WHITE and "WHITE" or "BLACK"
-    
+    return color==Colors.WHITE and "white" or "black"  
 
 class Piece:
     def __init__(self,shape,color):
         self.shape = shape
         self.color = color
     def __repr__(self):
-        return '%s %s' % ( shapeName(self.shape), colorName(self.color) )
+        return '%s %s' % ( colorName(self.color), shapeName(self.shape) )
 
+def pieceLetter(p):
+    if p:        
+        l = ShapeTraits[p.shape].letter
+        if p.color == Colors.WHITE:
+            l = l.upper()
+        return l    
+    else:
+        return '.'
+    
 class Square:
     def __init__(self,row,col,piece=None):
         self.row = row
@@ -50,6 +84,28 @@ class Board:
             for col in range(8):
                 self.squares[row*8+col] = Square(row,col)
 
+    def __repr__(self):
+        #join 8 rows; each row is a join of 8 letters.
+        return "\n".join([
+            "".join([
+                pieceLetter(sq.piece)
+                for sq
+                in self.squares[row*8:row*8+8]
+                ])
+            for row
+            in range(8)
+            ])
+            
+        for row in range(7,-1,-1):
+            for col in range(8):
+                p = self[row,col]
+                if p:
+                    print p.shapeLetter,
+                else:
+                    print '.',
+            print
+        print
+                    
     def __setitem__(self,key,value):
         row,col = key
         self.squares[row*8+col].piece = value;
@@ -62,22 +118,43 @@ class Board:
         self.squares[dst], self.squares[src] = self.squares[src], None
 
     def whites(self):
-        return [ sq for sq in self.squares if (sq.piece and sq.piece.color == Color.WHITE) ]
-            
+        return [ sq for sq in self.squares if (sq.piece and sq.piece.color == Colors.WHITE) ]
 
+    def clear(self):
+        for sq in self.squares:
+            sq.piece = None
+            
+    def readFen(self,fen):
+        self.clear()
+        fields = fen.split( ' ' )
+        placement = fields[0]
+        row = 0
+        col = 0
+        for ch in placement:
+            if ch == '/':
+                assert col == 8
+                row += 1
+                col = 0
+            elif ch.isdigit():
+                col += int(ch)
+            else:
+                shape = shapeByLetter(ch).shape
+                if ch.islower():
+                    color = Colors.BLACK
+                else:
+                    color = Colors.WHITE
+                piece = Piece( shape, color )
+                self[row,col] = piece
+                col += 1
+        row += 1
+        assert row == 8 and col == 8
 
 
 if __name__ == '__main__':
     b = Board()
-    b[0,0] = Piece(Shape.ROCK, Color.WHITE)
-    b[0,1] = Piece(Shape.HORSE, Color.WHITE)
-    b[0,2] = Piece(Shape.BISOPH, Color.WHITE)
-    b[7,0] = Piece(Shape.ROCK, Color.BLACK)
-    b[7,4] = Piece(Shape.KING, Color.BLACK)
-    for i in range(8):
-        b[1,i] = Piece(Shape.PION, Color.WHITE)
-        b[6,i] = Piece(Shape.PION, Color.BLACK)
-    
+    b.readFen('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2')
+    print b
+        
     w = b.whites();
     for sq in w:
-        print sq.piece
+        print "%s at (%d,%d)" % (sq.piece, sq.row, sq.col)
