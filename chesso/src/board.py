@@ -79,10 +79,11 @@ class Square:
     
 class Board:
     def __init__(self):
-        self.squares = [None]*64
-        for row in range(8):
-            for col in range(8):
-                self.squares[row*8+col] = Square(row,col)
+        self.squares = [ Square(i/8,i%8) for i in range(64) ]
+        self.move = Colors.WHITE
+        self.castling = '-'
+        self.enpassant = '-'
+
 
     def __repr__(self):
         #join 8 rows; each row is a join of 8 letters.
@@ -94,7 +95,7 @@ class Board:
                 ])
             for row
             in range(8)
-            ])
+            ]) + '\n - ' + colorName(self.move) + ' move' + '\n' 
             
         for row in range(7,-1,-1):
             for col in range(8):
