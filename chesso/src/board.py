@@ -5,23 +5,20 @@ Created on Apr 1, 2012
 '''
 
 from location import Loc
-from pieces import Colors, colorName, Piece, pieceLetter, shapeByLetter
+from pieces import Piece, pieceLetter, Colors, colorName, shapeByLetter
 
 
 class Square:
     def __init__(self,loc,piece=None):
+        assert isinstance(loc, Loc)
         self.loc = loc
         self.piece = piece
         
-    def put(self, piece):
-        self.piece = piece 
-    
-
     
 class Board:
     def __init__(self):
         self.squares = [ Square(Loc(i/8,i%8)) for i in range(64) ]
-        self.move = Colors.WHITE
+        self.nextmove = Colors.WHITE
         self.castling = '-'
         self.enpassant = '-'
 
@@ -30,10 +27,11 @@ class Board:
         return "\n".join([
             "".join([
                 pieceLetter(sq.piece)
-                for sq in self.squares[row*8:row*8+8]
+                for sq in self.row(row)
                 ])
             for row in range(8)
-            ])  + '\n - ' + colorName(self.move) + ' move' + '\n'
+            ]) + \
+            '\n - ' + colorName(self.nextmove) + ' move' + '\n'
             
                     
     def __setitem__(self,loc,value):
@@ -44,12 +42,20 @@ class Board:
         assert isinstance(loc, Loc)
         return self.squares[loc.index()].piece;
 
-    def move(self, src, dst):
-        self.squares[dst], self.squares[src] = self.squares[src], None
+    def row(self,row):
+        assert row>=0 and row<8
+        return self.squares[row*8:row*8+8]
 
-    def whites(self):
-        return [ sq for sq in self.squares if (sq.piece and sq.piece.color == Colors.WHITE) ]
+    def col(self,col):
+        assert col>=0 and col<8
+        return [self.squares[row+col] for row in range(8)]        
 
+    def army(self,color):
+        return [sq for sq in self.squares if (sq.piece and sq.piece.color == color)]
+    
+    def force(self,shape,color):
+        return [sq for sq in self.squares if (sq.piece and sq.piece.color == color and sq.piece.shape == shape)]
+    
     def clear(self):
         for sq in self.squares:
             sq.piece = None
@@ -84,6 +90,6 @@ if __name__ == '__main__':
     b.readFen('rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq c6 0 2')
     print b
         
-    w = b.whites();
+    w = b.army(Colors.WHITE)
     for sq in w:
-        print "%s at (%d,%d)" % (sq.piece, sq.row, sq.col)
+        print "%s at %s" % (sq.piece, sq.loc)

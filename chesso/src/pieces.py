@@ -17,19 +17,22 @@ class Colors:
     BLACK=2
 
 class ShapeTrait:
-    def __init__( self, shape, name, letter ):
+    def __init__( self, shape, name, letter, maximum ):
         self.shape = shape
         self.name = name
         self.letter = letter
+        self.maximum = maximum
 
 ShapeTraits = [
-    ShapeTrait( Shape.PAWN, 'pawn', 'p' ),
-    ShapeTrait( Shape.KNIGHT, 'knight', 'n' ),
-    ShapeTrait( Shape.BISHOP, 'bishop', 'b' ),
-    ShapeTrait( Shape.ROOK, 'rook', 'r' ),
-    ShapeTrait( Shape.QUEEN, 'queen', 'q' ),
-    ShapeTrait( Shape.KING, 'king', 'k' ),               
+    ShapeTrait( Shape.PAWN, 'pawn', 'p', 8 ),
+    ShapeTrait( Shape.KNIGHT, 'knight', 'n', 2 ),
+    ShapeTrait( Shape.BISHOP, 'bishop', 'b', 2 ),
+    ShapeTrait( Shape.ROOK, 'rook', 'r', 2 ),
+    ShapeTrait( Shape.QUEEN, 'queen', 'q', 1 ),
+    ShapeTrait( Shape.KING, 'king', 'k', 1 ),               
     ]
+
+PromotableShapes = [ Shape.KNIGHT, Shape.BISHOP, Shape.ROOK, Shape.QUEEN ]
 
 def shapeName(shape):
     return ShapeTraits[shape].name
@@ -49,6 +52,12 @@ def shapeByLetter(ch):
 def colorName(color):
     return color==Colors.WHITE and "white" or "black"  
 
+def opositeColor(color):
+    if color==Colors.WHITE:
+        return Colors.BLACK
+    else:
+        return Colors.WHITE
+
 class Piece:
     def __init__(self,shape,color):
         self.shape = shape
@@ -59,7 +68,7 @@ class Piece:
         l = ShapeTraits[self.shape].letter
         if self.color == Colors.WHITE:
             l = l.upper()
-            return l
+        return l
 
 def pieceLetter(p):
     if p:
