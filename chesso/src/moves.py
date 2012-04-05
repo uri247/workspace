@@ -153,16 +153,14 @@ def possibleMoveSq(board, sq):
     movefn = movedict[piece.shape]
     return movefn(board,sq)
 
-def possibleMove(board, sq=None):
-    if sq:
-        return possibleMoveSq(board, sq)
-    else:
-        mvs = []
-        for sq in board.army( board.nextmove ):
-            mvs += possibleMoveSq(board,sq)
-        return mvs
-    pass
-
+def possibleMoveColor(board, color):
+    mvs = []
+    for sq in board.army( color ):
+        mvs += possibleMoveSq(board,sq)
+    return mvs
+    
+def possibleMove(board):
+    return possibleMoveColor(board, board.nextmove )
 
 def executeMove( board, move ):
     assert isinstance(board,Board)
@@ -173,11 +171,6 @@ if __name__ == '__main__':
     b = Board()
     b.readFen('r1nb1kbn/rPppPppp/p7/8/2Q2P2/6N1/R5PP/2N2K2 w')
     print b
-    
-    mvs = []
-    army = b.army( b.nextmove )
-    for sq in army:
-        mvs += possibleMove( b, sq )
-        
+    mvs = possibleMove( b )        
     for mv in mvs:
         print mv
