@@ -23,7 +23,7 @@ class Loc(object):
         return (self.row < 7) and Loc(self.row+1,self.col) or None
     def west(self):
         return (self.col > 0) and Loc(self.row,self.col-1) or None
-    def right(self):
+    def east(self):
         return (self.col < 7) and Loc(self.row,self.col+1) or None
     def nw(self):
         return (self.row > 0 and self.col > 0) and Loc(self.row-1,self.col-1) or None
