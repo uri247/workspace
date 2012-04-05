@@ -8,14 +8,14 @@ from location import Loc
 from pieces import Piece, pieceLetter, Colors, colorName, shapeByLetter
 
 
-class Square:
+class Square(object):
     def __init__(self,loc,piece=None):
         assert isinstance(loc, Loc)
         self.loc = loc
         self.piece = piece
         
     
-class Board:
+class Board(object):
     def __init__(self):
         self.squares = [ Square(Loc(i/8,i%8)) for i in range(64) ]
         self.nextmove = Colors.WHITE

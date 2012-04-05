@@ -145,15 +145,24 @@ movedict = {
     Shape.KNIGHT: possibleMoveShort,
     }
     
-def possibleMove(board, sq):
+def possibleMoveSq(board, sq):
     assert isinstance(board,Board)
     assert isinstance(sq, Square)
     src = sq.loc
     piece = board[src]
-
     movefn = movedict[piece.shape]
     return movefn(board,sq)
-    
+
+def possibleMove(board, sq=None):
+    if sq:
+        return possibleMoveSq(board, sq)
+    else:
+        mvs = []
+        for sq in board.army( board.nextmove ):
+            mvs += possibleMoveSq(board,sq)
+        return mvs
+    pass
+
 
 def executeMove( board, move ):
     assert isinstance(board,Board)
