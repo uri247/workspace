@@ -82,6 +82,12 @@ class Board:
                 col += 1
         row += 1
         assert row == 8 and col == 8
+        if( len(fields) > 1 ):
+            self.nextmove = fields[1] == 'w' and Colors.BLACK or Colors.WHITE
+        if( len(fields) > 2 ):
+            self.castling = fields[2]
+        if( len(fields) > 3 ):
+            self.enpassant = fields[3]
 
     
     
