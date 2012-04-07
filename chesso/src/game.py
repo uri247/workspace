@@ -8,10 +8,34 @@ from board import Board
 from moves import Move, possibleMove
 from pieces import Shape, opositeColor
 
+fenScholarMate = 'r1bqk1nr/pppp1Qpp/2n5/2b1p3/2B1P3/8/PPPP1PPP/RNB1K1NR b'
+fenNotMate = 'r1bqk2r/pppp1Qpp/2n4n/2b1p3/2B1P3/8/PPPP1PPP/RNB1K1NR b'
+
+
 class Game(Board):
-    def __init__(self):
-        Board.__init__( self )
+    def __init__( self, other=None ):
+        Board.__init__( self, other )
         pass
+
+    def clone(self):
+        copy = Game( self )
+        return copy
+        
+    def executeMove(self,move):
+        assert isinstance(self, Board)
+        assert isinstance(move, Move)
+        assert self[move.src]
+        assert self[move.src].shape == move.pc.shape
+        assert move.pc.color == self.nextmove
+        assert move.dst
+        assert not self[move.dst] or self[move.dst].color == opositeColor(self.nextmove)
+        self[move.dst], self[move.src] = self[move.src], None
+        self.nextmove = opositeColor(self.nextmove)
+
+    def tryMove(self,move):
+        newboard = self.clone( )
+        newboard.executeMove( move )
+        return newboard
 
     def isend(self):
         mvs = possibleMove(self)
@@ -20,18 +44,28 @@ class Game(Board):
                 return True
         return False
     
-    def executeMove(self,move):
-        assert isinstance(self, Board)
-        assert isinstance(move, Move)
-        assert self[move.src]
-        assert self[move.src] == move.pc
-        assert move.pc.color == self.nextmove
-        assert move.dst
-        assert not self[move.dst] or self[move.dst].color == opositeColor(self.nextmove)
-        self[move.dst], self[move.src] = self[move.src], None
-        
+    def ismate(self):
+        #for each move I'm making it is end
+        mvs = possibleMove( self )
+        for mv in mvs:
+            b = self.tryMove( mv )
+            if not b.isend( ):
+                return False
+        return True
 
+    def childs(self):
+        brds = []
+        for mv in possibleMove( self ):
+            b = self.tryMove(mv)
+            if not b.isend():
+                brds.append( b )
+        return brds
+
+        
 if __name__ == '__main__':
     gm = Game( )
-    gm.readFen('r1nb1kbn/rPppPppp/p7/8/2Q2P2/6N1/R5PP/2N2K2 w')
-    print gm.isend( )
+    gm.readFen( fenScholarMate )
+    print gm.ismate( )
+    gm.readFen( fenNotMate )
+    print gm.ismate( )
+    

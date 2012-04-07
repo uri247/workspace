@@ -162,11 +162,6 @@ def possibleMoveColor(board, color):
 def possibleMove(board):
     return possibleMoveColor(board, board.nextmove )
 
-def executeMove( board, move ):
-    assert isinstance(board,Board)
-    assert isinstance(move, Move)
-
-
 if __name__ == '__main__':
     b = Board()
     b.readFen('r1nb1kbn/rPppPppp/p7/8/2Q2P2/6N1/R5PP/2N2K2 w')

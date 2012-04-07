@@ -69,6 +69,8 @@ class Piece:
         if self.color == Colors.WHITE:
             l = l.upper()
         return l
+    def clone(self):
+        return Piece(self.shape,self.color)
 
 def pieceLetter(p):
     if p:

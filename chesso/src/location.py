@@ -51,3 +51,5 @@ class Loc(object):
         return self.west() and self.west().sw() or None
     def nww(self):
         return self.west() and self.west().nw() or None
+    def clone(self):
+        return Loc( self.row,self.col )

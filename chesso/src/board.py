@@ -13,15 +13,24 @@ class Square(object):
         assert isinstance(loc, Loc)
         self.loc = loc
         self.piece = piece
-        
+    def clone(self):
+        p = self.piece and self.piece.clone() or None
+        return Square(self.loc.clone(), p)        
     
 class Board(object):
-    def __init__(self):
-        self.squares = [ Square(Loc(i/8,i%8)) for i in range(64) ]
-        self.nextmove = Colors.WHITE
-        self.castling = '-'
-        self.enpassant = '-'
-
+    def __init__(self, other=None):
+        if not other:
+            self.squares = [ Square(Loc(i/8,i%8)) for i in range(64) ]
+            self.nextmove = Colors.WHITE
+            self.castling = '-'
+            self.enpassant = '-'
+        else:
+            assert isinstance(other, Board)
+            self.squares = [ sq.clone() for sq in other.squares ]
+            self.nextmove = other.nextmove
+            self.castling = other.castling
+            self.enpassant = other.enpassant
+            
     def __repr__(self):
         #join 8 rows; each row is a join of 8 letters.
         return "\n".join([
