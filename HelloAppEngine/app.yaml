@@ -1,0 +1,15 @@
+application: uri-hi
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /whoami
+  script: whoami.application
+- url: /gb
+  script: gb.application
+- url: /sign
+  script: gb.application
+- url: /.*
+  script: helloworld.application
