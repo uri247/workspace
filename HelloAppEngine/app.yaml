@@ -1,4 +1,4 @@
-application: uri-hi
+application: u-hello
 version: 1
 runtime: python27
 api_version: 1
@@ -11,5 +11,19 @@ handlers:
   script: gb.application
 - url: /sign
   script: gb.application
+- url: /data
+  script: data.application
+- url: /si
+  script: data.application
+- url: /j
+  script: j.application
+- url: /s
+  static_dir: s
 - url: /.*
   script: helloworld.application
+
+
+
+libraries:
+- name: jinja2
+  version: latest
