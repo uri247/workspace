@@ -5,7 +5,7 @@ Created on Apr 5, 2012
 '''
 
 from board import Board
-from moves import Move, possibleMove
+from moves import Move, possibleMove, possibleMoveColor
 from pieces import Shape, opositeColor
 
 fenScholarMate = 'r1bqk1nr/pppp1Qpp/2n5/2b1p3/2B1P3/8/PPPP1PPP/RNB1K1NR b'
@@ -37,15 +37,22 @@ class Game(Board):
         newboard.executeMove( move )
         return newboard
 
-    def isend(self):
-        mvs = possibleMove(self)
+    def canKillKing(self, color):
+        mvs = possibleMoveColor( self, color )
         for mv in mvs:
             if self[mv.dst] and self[mv.dst].shape == Shape.KING:
                 return True
         return False
+                
+    def isend(self):
+        return self.canKillKing( self.nextmove )
+
+    def isCheck(self):
+        return self.canKillKing( opositeColor(self.nextmove) )
     
     def ismate(self):
-        #for each move I'm making it is end
+        if not self.isCheck( ):
+            return False
         mvs = possibleMove( self )
         for mv in mvs:
             b = self.tryMove( mv )
@@ -58,10 +65,10 @@ class Game(Board):
         for mv in possibleMove( self ):
             b = self.tryMove(mv)
             if not b.isend():
-                brds.append( b )
+                brds.append( (mv,b) )
         return brds
 
-        
+
 if __name__ == '__main__':
     gm = Game( )
     gm.readFen( fenScholarMate )

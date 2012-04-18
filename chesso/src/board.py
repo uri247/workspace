@@ -33,7 +33,7 @@ class Board(object):
             
     def __repr__(self):
         #join 8 rows; each row is a join of 8 letters.
-        return "\n".join([
+        return '\n' + '\n'.join([
             "".join([
                 pieceLetter(sq.piece)
                 for sq in self.row(row)
