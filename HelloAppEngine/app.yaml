@@ -17,6 +17,8 @@ handlers:
   script: data.application
 - url: /j
   script: j.application
+- url: /jsi
+  script: j.application
 - url: /s
   static_dir: s
 - url: /.*

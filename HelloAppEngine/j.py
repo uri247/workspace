@@ -5,12 +5,16 @@ import webapp2
 from google.appengine.ext import db
 from google.appengine.api import users
 
+import jinja2
+import os
+jinja_environment = jinja2.Environment( loader=jinja2.FileSystemLoader(os.path.dirname(__file__)) )
+
 
 class Greeting(db.Model):
     """model an individual guest book entry with an author, content and date
     """
     author = db.UserProperty()
-    #content = db.StringListProperty(multiline=True)
+    content = db.StringProperty(multiline=True)
     date = db.DateTimeProperty(auto_now_add=True)
     
 def guestbook_key(guestbook_name=None):
@@ -19,8 +23,6 @@ def guestbook_key(guestbook_name=None):
     return db.Key.from_path('Guestbook', guestbook_name or 'default_guestbook')
 
 class ReqHandler(webapp2.RequestHandler):
-    def __init__(self):
-        pass
     def w(self,msg):
         self.response.out.write(msg)        
 
@@ -28,35 +30,23 @@ class MainPage(ReqHandler):
     def get(self):
         gbname = self.request.get('guestbook_name')
         query = Greeting.all().ancestor(guestbook_key(gbname)).order('-date')
-        greet = query.fetch(10)
-        
-        if users.get_current_user():
-            url = users.create_logout_url(self.request.uri)
-            url_linktext = 'Logout'
-        else:
-            url = users.create_login_url(self.request.uri)
-            url_linktext = 'Login'
-        template_values = {
-            'greetings' : greet,
-            'url': url,
-            'url_linktext': url_linktext,
-            }
-        remplate = jinja_en
-            
-            
-    
-        else:
-            url = users.create_login_url(self.request.uri)
-            url_linktext = 'Login'
+        greetings = query.fetch(10)
 
-        template_values = {
+        if users.get_current_user():
+            url = users.create_login_url(self.request.uri)
+            label = 'Logout'
+        else:
+            url = users.create_logout_url(self.request.uri)
+            label = 'Login'
+        
+        d = {
             'greetings': greetings,
             'url': url,
-            'url_linktext': url_linktext,
-        }
-
-        template = jinja_environment.get_template('index.html')
-        self.response.out.write(template.render(template_values))
+            'label': label
+            }
+        
+        template = jinja_environment.get_template('j.html')
+        self.w( template.render(d) )
 
 
 class Guestbook(ReqHandler):
@@ -67,13 +57,13 @@ class Guestbook(ReqHandler):
             greet.author = users.get_current_user()
         greet.content = self.request.get('content')
         greet.put()
-        self.redirect('/?' + urllib.urlencode( {'guestbook_name': gbname } ) )
+        self.redirect('/j?' + urllib.urlencode( {'guestbook_name': gbname } ) )
     pass
 
 
 routes = [
-    ('/data', MainPage ),
-    ('/sign', Guestbook )
+    ('/j', MainPage ),
+    ('/jsi', Guestbook )
     ]
           
 
