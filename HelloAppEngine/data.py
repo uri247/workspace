@@ -10,7 +10,7 @@ class Greeting(db.Model):
     """model an individual guest book entry with an author, content and date
     """
     author = db.UserProperty()
-    #content = db.StringListProperty(multiline=True)
+    content = db.StringProperty(multiline=True)
     date = db.DateTimeProperty(auto_now_add=True)
     
 def guestbook_key(guestbook_name=None):
@@ -19,8 +19,6 @@ def guestbook_key(guestbook_name=None):
     return db.Key.from_path('Guestbook', guestbook_name or 'default_guestbook')
 
 class ReqHandler(webapp2.RequestHandler):
-    def __init__(self):
-        pass
     def w(self,msg):
         self.response.out.write(msg)        
 
@@ -64,13 +62,13 @@ class Guestbook(ReqHandler):
             greet.author = users.get_current_user()
         greet.content = self.request.get('content')
         greet.put()
-        self.redirect('/?' + urllib.urlencode( {'guestbook_name': gbname } ) )
+        self.redirect('/data?' + urllib.urlencode( {'guestbook_name': gbname } ) )
     pass
 
 
 routes = [
     ('/data', MainPage ),
-    ('/sign', Guestbook )
+    ('/si', Guestbook )
     ]
           
 
