@@ -8,7 +8,7 @@
 using namespace std;
 
 void combo( void ) {
-	vector<int> v { 1, 2, 3, 4, 5, 6, 7 };
+	std::vector<int> v { 1, 2, 3, 4, 5, 6, 7 };
 	int x {5};
 	auto mark = remove_if( v.begin(), v.end(), [x](int n) { return n<x; } );
 	v.erase( mark, v.end() );
@@ -19,8 +19,10 @@ void combo( void ) {
 
 struct Base {
     virtual void met( ) { }
+    virtual ~Base( ) { }
 };
-struct Record : public Base{
+
+struct Record : public Base {
 };
 
 void method( Base* pbase )
