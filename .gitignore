@@ -3,6 +3,8 @@
 .metadata/
 Debug/
 bin/
+eleven/Debug/
+eleven/Release/
 
 *.swp
 *.pyc
