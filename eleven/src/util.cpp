@@ -1,21 +1,29 @@
 #include <iostream>
+#include <iomanip>
 #include <utility>
 
-struct A
-{
-    A( int&& n ) { std::cout << "rvalue constructor, n=" << n << "\n"; }
-    A( int& n ) { std::cout << "lvalue constructor, n=" << n << "\n"; }
-};
+
+void fn( int&& n ) { std::cout << "rvalue fn, n=" << n << std::endl; n = 0; }
+void fn( int& n ) { std::cout << "lvalue fn, n=" << n << std::endl; }
+//void fn( const int n ) { std::cout << "const fn, n=" << n << std::endl; }
+//void fn( const int& n ) { std::cout << "const& fn, n=" << n << std::endl; }
 
 template< class T >
-void foo( T&& t )
+void wrap( T&& t )
 {
-	A a( t );
+	std::cout << "bare - ";
+	fn( t );
+	std::cout << "fwd - ";
+	fn( std::forward<T>( t ) );
 }
 
 void do_util( )
 {
-    foo( 2 );
-    int i = 3;
-    foo( i );
+	int i=1;
+	const int j=2;
+	int& k = i;
+	int const& l = i;
+
+	//fn( static_cast<int&&>(5) );
+	fn( k );
 }
