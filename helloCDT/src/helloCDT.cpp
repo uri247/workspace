@@ -10,8 +10,8 @@ int main()
         words.push_back( "world" );
         words.push_back( "!!" );
 
-        for( vector<string>::iterator i=words.begin(); i != words.end(); ++i ) {
-                cout << *i << " ";
+        for( auto& s : words ) {
+                std::cout << s << " ";
         }
-        cout << endl;
+        std::cout << std::endl;
 }

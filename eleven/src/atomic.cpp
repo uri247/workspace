@@ -1,15 +1,13 @@
-#include <thread>
 #include <iostream>
 #include <chrono>
+#include <iosfwd>
+#include <utility>
 
 void oob( void )
 {
-    //std::this_thread::sleep_for( std::chrono::seconds(2) );
 }
 
 void atomic( void )
 {
-    //std::thread(oob).detach();
-
 
 }

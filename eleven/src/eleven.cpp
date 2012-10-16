@@ -10,6 +10,7 @@
 void casting( void );
 void rawmem( void );
 void moretraits( unsigned int input );
+void do_util( void );
 
 void combo( void ) {
 	std::vector<int> v { 1, 2, 3, 4, 5, 6, 7 };
@@ -28,5 +29,6 @@ int main( int argc, char* argv[] )
 	casting( );
 	rawmem( );
     moretraits( 0xfffffffe );
+    do_util( );
 	return 0;
 }
