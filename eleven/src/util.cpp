@@ -5,8 +5,8 @@
 
 void fn( int&& n ) { std::cout << "rvalue fn, n=" << n << std::endl; n = 0; }
 void fn( int& n ) { std::cout << "lvalue fn, n=" << n << std::endl; }
-//void fn( const int n ) { std::cout << "const fn, n=" << n << std::endl; }
-//void fn( const int& n ) { std::cout << "const& fn, n=" << n << std::endl; }
+// void fn( const int n ) { std::cout << "const fn, n=" << n << std::endl; }
+// void fn( const int& n ) { std::cout << "const& fn, n=" << n << std::endl; }
 
 template< class T >
 void wrap( T&& t )
