@@ -22,8 +22,6 @@ void combo( void ) {
 	std::cout << std::endl;
 }
 
-
-
 int main( int argc, char* argv[] )
 {
 	combo( );
