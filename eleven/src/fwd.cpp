@@ -20,10 +20,12 @@ void wrap( T&& t )
 void do_util( )
 {
 	int i=1;
-	const int j=2;
 	int& k = i;
-	int const& l = i;
 
-	//fn( static_cast<int&&>(5) );
-	fn( k );
+	std::cout << "calling with int i:" << std::endl;
+	wrap( i );
+
+	std::cout << "calling with int& k:" << std::endl;
+	wrap( k );
+
 }
