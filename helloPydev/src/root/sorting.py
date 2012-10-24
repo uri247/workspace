@@ -1,4 +1,5 @@
 import os
+import itertools
 root1 = 'c:\\uri\\workspace'
 root2 = 'c:\\uri\\workspace\\helloPydev'
 
@@ -34,11 +35,23 @@ def lambada():
     for x in sorted(ls, key = lambda x: abs(x) ): print x,
     print
     
+def grouping():
+    ls = [('uri',20), ('uri',50), ('uri', 80), ('michal',15), 
+          ('michal', 55), ('dana', 30), ('michal',5), ('dana',10)]
+    di = dict();
+    keyfn = lambda x: x[0]
+    for k, g in itertools.groupby( sorted(ls,key=keyfn), keyfn ):
+        di[ k ] = list(g)
+    print di['uri']
+    pass
+    
+
     
 def main():
     smart_walk()
     nested_comp()
     lambada()
+    grouping()
     
 
 if __name__ == '__main__':
