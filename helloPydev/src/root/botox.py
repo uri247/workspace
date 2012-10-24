@@ -3,6 +3,7 @@ import os
 
 localpath = r'c:/local/photos/ufr'
 bucket = 'ufr'
+limit = 100
 
 
 def connect():
@@ -11,6 +12,23 @@ def connect():
     ufr = s3.create_bucket(bucket)
     keys = ufr.list()
     
+def get_sky_list():
+    global sky_list
+    sky_list = list()
+    for index,k in enumerate(keys):
+        if( index == limit ):
+            break
+        folder, _, tail = k.name.partition('/')
+        item = ( folder, tail, k.name, k.size )
+        sky_list.append( item )
+
+def parse_sky_list():
+    global sky_folders
+    fldr_set = set( [item[0] for item in sky_list] )
+    sky_folders = []
+    for fldr in fldr_set:
+        print fldr
+
 def xcopy():
     for k in keys:
         folder_name, file_name = k.name.split('/')
@@ -28,24 +46,7 @@ def iterate_local():
             for file in os.listdir(fldr):
                 if os.path.isfile( file ):
                     pass
-    
-def iterate_sky():
-    global sky_folders
-    sky_folders = dict()
-    for index,k in enumerate(keys):
-        if( index == 100 ):
-            break
-        folder, _, fl = k.name.partition('/')
-        if folder in sky_folders:
-            rec = sky_folders[folder]
-        else:
-            rec = (folder, [])
-            sky_folders[folder] = rec    
-        _, ls = rec
-        #if not '/' in fl:
-        if True:
-            ls.append( (fl,k.size) )
-        
+            
 def print_sky():
     for rec in sorted(sky_folders.keys()):
         nm, ls = sky_folders[rec]
@@ -65,10 +66,8 @@ def there_not_here():
 
 def main():
     connect()
-    iterate_sky()
-    print_sky()
-    there_not_here()
-
+    get_sky_list()
+    parse_sky_list()
 
 if __name__ == '__main__':
     main()
