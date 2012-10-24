@@ -12,6 +12,7 @@ void rawmem( void );
 void moretraits( unsigned int input );
 void do_util( void );
 void lambda( void );
+void tuple2array( );
 
 void combo( void ) {
 	std::vector<int> v { 1, 2, 3, 4, 5, 6, 7 };
@@ -22,8 +23,6 @@ void combo( void ) {
 	std::cout << std::endl;
 }
 
-
-
 int main( int argc, char* argv[] )
 {
 	combo( );
@@ -32,5 +31,6 @@ int main( int argc, char* argv[] )
     moretraits( 0xfffffffe );
     do_util( );
     lambda( );
+    tuple2array( );
 	return 0;
 }
