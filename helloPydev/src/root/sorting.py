@@ -20,6 +20,7 @@ def nested_comp():
     for fname in sorted( allfiles, key=os.path.getsize ):
         print fname, os.path.getsize(fname)
     
+    
 def lambada():
     ls = [10, -50, 30, 40, -20]
     
