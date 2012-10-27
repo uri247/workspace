@@ -5,10 +5,10 @@ import itertools
 
 localpath = r'c:/local/media/photos/ufr'
 bucket = 'ufr'
-limit = 100
+limit = 1000000
 
 s3 = ufr = keys = None
-sky_list = list()
+sky_list = dict()
 sky_fldrs = dict()
 local_list = list()
 
@@ -17,27 +17,33 @@ def connect():
     s3 = boto.connect_s3()
     ufr = s3.create_bucket(bucket)
     keys = ufr.list()
-
+    pass
+    
+    
 def get_sky_list():
     """
-    populates the sky_list global
+    populates the sky_list global dictionary
     each item in the list is an tuple with the following format:
-    (folder, tail, name, size)
+    (folder, tail, name, size, k)
     folder - the root folder (e.g. album name for the photoalbum ufr
     tail - the rest of the path
     name - full path to the item
     size - size in bytes
+    k - the boto key object
     """
     for index,k in enumerate(keys):
         if( index == limit ):
             break
         folder, _, tail = k.name.partition('/')
-        item = ( folder, tail, k.name, k.size )
-        sky_list.append( item )
-    sky_list.sort( key = lambda item: item[0] )
+        item = ( folder, tail, k.name, k.size, k )
+        if k.size > 0:
+            sky_list[k.name] = item
+
 
 def group_sky_by_folders():
-    for fldrnm, ls_it in itertools.groupby( sky_list, lambda item: item[0] ):
+    sky_list_sorted = sorted( sky_list.values(), key = lambda item: item[2] )
+    
+    for fldrnm, ls_it in itertools.groupby( sky_list_sorted, lambda item: item[0] ):
         ls = list(ls_it)
         total_size = sum( item[3] for item in ls )
         sky_fldrs[fldrnm] = (fldrnm,list(ls),total_size)      
@@ -58,24 +64,30 @@ def get_local_list():
             rel_path = os.path.relpath(full_path,localpath).replace('\\','/')
             item = ( rel_path, os.path.getsize(full_path) )
             local_list.append( item )
-    
+
+
 def get_missings():
-    skyNames = [skyName for _,_,skyName,_ in sky_list]
-    localNames = [localName for localName,_ in local_list]
+    """
+    generates sky_not_in_local and local_not_in_sky
+    """
+    global sky_not_in_local, local_not_in_sky
     
-    skyNotInLocal = [skyName for skyName in skyNames if skyName not in localNames]
-    localNotInSky = [localName for localName in localNames if localName not in skyNames]
+    localNames = set( [localName for localName,_ in local_list] )
+    
+    sky_not_in_local = [skyName for skyName in sky_list.keys() if skyName not in localNames]
+    local_not_in_sky = [localName for localName in localNames if localName not in sky_list]
+    
+    sky_not_in_local.sort();
+    local_not_in_sky.sort();
     
     print 'files in sky missing here:'
-    for skyName in skyNotInLocal:
-        print skyName
-    
+    for skyName in sky_not_in_local:
+        print '  - {0}'.format(skyName)   
     print 'files locally missing from sky:'
-    for localName in localNotInSky:
-        print localName
+    for localName in local_not_in_sky:
+        print '  - {0}'.format(localName)
     
-    
-    
+
 def xcopy():
     for k in keys:
         folder_name, file_name = k.name.split('/')
@@ -84,7 +96,47 @@ def xcopy():
             os.mkdir( folder_name )
         print "  - %s" % (file_name)
         k.get_contents_to_filename(k.name)
+
+def create_folders_for_fname_and_norm(fname):
+    full_path = os.path.normpath( os.path.join(localpath,fname) )
+    node = os.path.normpath( localpath )
+    while True:
+        head,sep,tail = fname.partition('/')
+        if( not sep ):
+            break;
+        node = os.path.join( node, head )
+        fname = tail
+        if not os.path.isdir(node):
+            os.mkdir( node )
+    return full_path
+
+def sync_dn():
+    for skyFile in sky_not_in_local:
+        localFilename = create_folders_for_fname_and_norm(skyFile )
+        print "... copying {0} ==> {1}".format( skyFile, localFilename )
+        _,_,_,_,k = sky_list[skyFile]
+        k.get_contents_to_filename(localFilename)
+        
+def sync_up():
+    for localFile in local_not_in_sky:
+        pass
+
     
+def prompt_to_sync_loop():
+    while True:
+        answer = raw_input('do you want to sync (quit|up|down|both)? ')
+        if( answer == 'up' ):
+            sync_up()
+        elif( answer == 'down' ):
+            sync_dn()
+        elif( answer == 'both' ):
+            sync_up()
+            sync_dn()
+        elif( answer == 'quit' ):
+            break
+        pass
+    pass
+
 
 def main():
     connect()
@@ -93,7 +145,7 @@ def main():
     print_sky_folders()
     get_local_list()
     get_missings()
-
+    prompt_to_sync_loop()
 
 if __name__ == '__main__':
     main()
