@@ -6,7 +6,7 @@ import re
 localpath = r'c:/local/media/photos/ufr'
 bucket = 'ufr'
 limit = 1000000
-excl_f_rex = re.compile( 'Thumbs.db|\.mov$' )
+excl_f_rex = re.compile( 'Thumbs.db|\.mov|\.MOV' )
 excl_d_rex = re.compile( '----')
 
 s3 = ufr = keys = None
