@@ -20,6 +20,7 @@ def nested_comp():
     for fname in sorted( allfiles, key=os.path.getsize ):
         print fname, os.path.getsize(fname)
     
+    
 def lambada():
     ls = [10, -50, 30, 40, -20]
     
@@ -44,14 +45,20 @@ def grouping():
         di[ k ] = list(g)
     print di['uri']
     pass
-    
 
+def permute():
+    def inserts(st,ch):
+        return [ st[:i]+ch+st[i:] for i in xrange(len(st),-1,-1) ]
+    def step(ls,ch):
+        return [est for st in ls for est in inserts(st,ch)]
+    print reduce( step, list('abcd'), [''] )
     
 def main():
     smart_walk()
     nested_comp()
     lambada()
     grouping()
+    permute()
     
 
 if __name__ == '__main__':
