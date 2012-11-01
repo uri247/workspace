@@ -17,8 +17,8 @@ for i,arg in enumerate(sys.argv):
 # the Unix getopt style parsing
 try:
     opts, args = getopt.getopt( sys.argv[1:], 
-                                "hfgt:p:",
-                                [ 'help', 'float', 'grammer', 'time=', 'print='] )
+                                "hfgt:p:a:",
+                                [ 'help', 'float', 'grammer', 'time=', 'print=', 'all'] )
 except getopt.GetoptError:
     print "Usage:"
     sys.exit(-2)
@@ -27,13 +27,15 @@ for opt, arg in opts:
         print "Usage:"
         sys.exit()
     elif opt in ('-f', '--float'):
-        print "Debug!"
+        print "Float!"
     elif opt in ('-g', '--grammer'):
         print "Grammer"
     elif opt in ('-t' '--time'):
         print "time", arg
     elif opt in ('-p', '--print'):
         print "print", arg
+    elif opt in ('-a', '--all'):
+        print "all", arg
         
     
             
