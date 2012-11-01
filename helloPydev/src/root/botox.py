@@ -37,6 +37,8 @@ def get_sky_list():
     for index, k in enumerate(keys):
         if(index == limit):
             break
+        if excl_f_rex.search(k.name):
+            continue
         folder, _, tail = k.name.partition('/')
         item = (folder, tail, k.name, k.size, k)
         if k.size > 0:
@@ -118,7 +120,7 @@ def sync_up():
     for localFile in local_not_in_sky:
         localFilename = os.path.normpath(os.path.join(localpath, localFile))
         print "... uploading {0}".format(localFile)
-        k = ufr.new_key('localFile')
+        k = ufr.new_key(localFile)
         k.set_contents_from_filename(localFilename)
         k.set_acl('public-read')
     
