@@ -2,12 +2,13 @@ import boto
 import os
 import itertools
 import re
+import argparse
 
-localpath = r'c:/local/media/photos/ufr'
-bucket = 'ufr'
-limit = 1000000
-excl_f_rex = re.compile( 'Thumbs.db|\.mov|\.MOV' )
-excl_d_rex = re.compile( '----')
+#localpath = r'c:/local/media/photos/ufr'
+#bucket = 'ufr'
+#limit = 1000000
+#excl_f_rex = re.compile( 'Thumbs.db|\.mov|\.MOV' )
+#excl_d_rex = re.compile( '----')
 
 s3 = ufr = keys = None
 sky_list = dict()
@@ -139,8 +140,27 @@ def prompt_to_sync_loop():
         pass
     pass
 
+def parse_cmdline():
+    global bucket, localpath, limit, excl_f_rex, excl_d_rex
+    parser = argparse.ArgumentParser( prog='S3Sync' )
+    parser.add_argument( '-x', '--exlucde', action='append', dest='xlist' )
+    parser.add_argument( '-s', '--skip', action='append', dest='slist' )
+    parser.add_argument( '-l', '--limit', action='store', default=1000000, type=int )
+    parser.add_argument( 'bucket', metavar='bucket name', default='ufr' )
+    parser.add_argument( 'directory', metavar='local directory', default='.' )
+    parser.print_help()
+    ns = parser.parse_args()
+    bucket = ns.bucket
+    localpath = ns.directory
+    limit = ns.limit
+    xf = '|'.join(ns.xlist)
+    xd = '|'.join(ns.slist)
+    excl_f_rex = re.compile( xf )
+    excl_d_rex = re.compile( xd )
+        
 
 def main():
+    parse_cmdline()
     connect()
     get_sky_list()
     group_sky_by_folders()
