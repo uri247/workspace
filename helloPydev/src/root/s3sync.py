@@ -15,6 +15,7 @@ sky_list = dict()
 sky_fldrs = dict()
 local_list = list()
 
+
 def connect():
     global s3, ufr, keys
     s3 = boto.connect_s3()
@@ -38,7 +39,7 @@ def get_sky_list():
     for index, k in enumerate(keys):
         if(index == limit):
             break
-        if excl_f_rex.search(k.name):
+        if excl_f_rex and excl_f_rex.search(k.name):
             continue
         folder, _, tail = k.name.partition('/')
         item = (folder, tail, k.name, k.size, k)
@@ -66,14 +67,14 @@ def get_local_list():
     """
     for r, ds, fs in os.walk(localpath):
         for f in fs:
-            if excl_f_rex.search( f ):
+            if excl_f_rex and excl_f_rex.search( f ):
                 continue        
             full_path = os.path.join(r, f)
             rel_path = os.path.relpath(full_path, localpath).replace('\\', '/')
             item = (rel_path, os.path.getsize(full_path))
             local_list.append(item)
         for d in ds:
-            if excl_d_rex.search( d ):
+            if excl_d_rex and excl_d_rex.search( d ):
                 ds.remove(d)
 
 def get_missings():
@@ -153,10 +154,18 @@ def parse_cmdline():
     bucket = ns.bucket
     localpath = ns.directory
     limit = ns.limit
-    xf = '|'.join(ns.xlist)
-    xd = '|'.join(ns.slist)
-    excl_f_rex = re.compile( xf )
-    excl_d_rex = re.compile( xd )
+    
+    if ns.xlist:
+        xf = '|'.join(ns.xlist)
+        excl_f_rex = re.compile( xf )
+    else:
+        excl_f_rex = None
+
+    if ns.slist:
+        xd = '|'.join(ns.slist)
+        excl_d_rex = re.compile( xd )
+    else:
+        excl_d_rex = None
         
 
 def main():
