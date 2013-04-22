@@ -4,7 +4,7 @@ import webapp2
 
 from google.appengine.ext import db
 from google.appengine.api import users
-
+from utils import ReqHandler
 
 class Greeting(db.Model):
     """model an individual guest book entry with an author, content and date
@@ -17,10 +17,6 @@ def guestbook_key(guestbook_name=None):
     """Constructs a datastore key for Guestbook entity
     """
     return db.Key.from_path('Guestbook', guestbook_name or 'default_guestbook')
-
-class ReqHandler(webapp2.RequestHandler):
-    def w(self,msg):
-        self.response.out.write(msg)        
 
 class MainPage(ReqHandler):
     def get(self):

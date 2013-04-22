@@ -1,3 +1,6 @@
+"""Guest book application
+"""
+
 import webapp2
 import cgi
 

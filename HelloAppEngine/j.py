@@ -1,12 +1,11 @@
-import cgi
 import urllib
-import webapp2
-
-from google.appengine.ext import db
-from google.appengine.api import users
-
 import jinja2
 import os
+from google.appengine.ext import db
+from google.appengine.api import users
+from google.appengine.ext import webapp
+from utils import ReqHandler
+
 jinja_environment = jinja2.Environment( loader=jinja2.FileSystemLoader(os.path.dirname(__file__)) )
 
 
@@ -21,10 +20,6 @@ def guestbook_key(guestbook_name=None):
     """Constructs a datastore key for Guestbook entity
     """
     return db.Key.from_path('Guestbook', guestbook_name or 'default_guestbook')
-
-class ReqHandler(webapp2.RequestHandler):
-    def w(self,msg):
-        self.response.out.write(msg)        
 
 class MainPage(ReqHandler):
     def get(self):
@@ -67,6 +62,6 @@ routes = [
     ]
           
 
-application = webapp2.WSGIApplication( routes, debug=True )
+application = webapp.WSGIApplication( routes, debug=True )
      
 

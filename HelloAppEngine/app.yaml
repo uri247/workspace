@@ -7,18 +7,16 @@ threadsafe: true
 handlers:
 - url: /whoami
   script: whoami.application
-- url: /gb
-  script: gb.application
-- url: /sign
+- url: /(gb|sign)
   script: gb.application
 - url: /data
   script: data.application
 - url: /si
   script: data.application
-- url: /j
+- url: /(j|jsi)
   script: j.application
-- url: /jsi
-  script: j.application
+- url: /fallrec.*
+  script: fallrec.application
 - url: /s
   static_dir: s
 - url: /.*
