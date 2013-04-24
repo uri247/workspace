@@ -20,6 +20,7 @@
 <path>${GOOGLE_APP_ENGINE}/lib/webapp2-2.5.2</path>
 <path>${GOOGLE_APP_ENGINE}/lib/webob-1.2.3</path>
 <path>${GOOGLE_APP_ENGINE}/lib/markupsafe-0.15</path>
+<path>${PYDEV}\pysrc</path>
 </pydev_pathproperty>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_VERSION">python 2.7</pydev_property>
 <pydev_property name="org.python.pydev.PYTHON_PROJECT_INTERPRETER">Default</pydev_property>
