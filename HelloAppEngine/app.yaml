@@ -19,6 +19,10 @@ handlers:
   script: fallrec.application
 - url: /s
   static_dir: s
+- url: /favicon\.ico
+  static_files: s/favicon.ico
+  upload: s/favicon.ico
+  
 - url: /.*
   script: helloworld.application
 
